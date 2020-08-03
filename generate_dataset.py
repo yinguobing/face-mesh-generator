@@ -46,7 +46,7 @@ def process(dataset, index_start_from=0):
     # from the start.
     try:
         # Enumerate all the samples in dataset.
-        for sample in tqdm(dataset.all_samples()):
+        for sample in tqdm(dataset):
             current_sample_index += 1
             if current_sample_index < index_start_from:
                 # Skip samples.
