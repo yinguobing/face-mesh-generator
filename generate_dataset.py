@@ -59,15 +59,15 @@ def process(dataset, index_start_from=0):
     try:
         # Enumerate all the samples in dataset.
         for sample in tqdm(dataset):
+            # In case the job is interrupted, we can start from somwhere in
+            # between rather than starting over from the very begining.
             current_sample_index += 1
             if current_sample_index < index_start_from:
-                # Skip samples.
                 continue
 
+            # Safety check, invalid samples will be discarded.
             image = sample.read_image()
             marks = sample.marks
-
-            # Safety check, invalid samples will be discarded.
 
             # Only color images are valid.
             if len(image.shape) != 3:
