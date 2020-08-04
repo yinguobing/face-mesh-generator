@@ -21,7 +21,8 @@ file_hdlr.setFormatter(log_formatter)
 
 # Setup the logger.
 logger = logging.getLogger(__name__)
-logger.addHandler([console_hdlr, file_hdlr])
+logger.addHandler(console_hdlr)
+logger.addHandler(file_hdlr)
 
 
 def process(dataset, index_start_from=0):
@@ -35,11 +36,13 @@ def process(dataset, index_start_from=0):
     Returns:
         None
     """
-    logging.info("Starting to process dataset: {}".format(
-        dataset.meta['name']))
+    logger.info("Starting to process dataset: {}".format(dataset.meta['name']))
 
     # Keep a record of the current location.
     current_sample_index = -1
+
+    # Count the samples considered invalid.
+    num_invalid_samples = 0
 
     # Some dataset contains enormous samples, in which some may be corrupted
     # and cause processing error. Catch these errors to avoid restarting over
@@ -59,19 +62,25 @@ def process(dataset, index_start_from=0):
 
             # Only color images are valid.
             if len(image.shape) != 3:
-                logging.warning(
-                    "Not a color image: {}, index: {}".format(sample.image_file, current_sample_index))
+                num_invalid_samples += 1
+                logger.warning("Not a color image: {}, index: {}".format(
+                    sample.image_file, current_sample_index))
                 continue
 
             # Check mark locations. Make sure they are all in image.
             img_height, img_width, _ = image.shape
             if not check_mark_location(img_height, img_width, marks):
-                logging.warning(
-                    "Mark outside of image: {}, index: {}".format(sample.image_file, current_sample_index))
+                num_invalid_samples += 1
+                logger.warning("Mark outside of image: {}, index: {}".format(
+                    sample.image_file, current_sample_index))
                 continue
     except:
-        logging.critical(
+        logger.critical(
             "Unexpected error. sample index: {}".format(current_sample_index))
+
+    # Summary
+    logger.info("Dataset done. Processed samples: {}, invalid samples: {}".format(
+        current_sample_index, num_invalid_samples))
 
 
 if __name__ == "__main__":
