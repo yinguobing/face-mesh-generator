@@ -21,18 +21,17 @@ if not isinstance(numeric_level, int):
 
 # Setup logs in the console.
 console_hdlr = logging.StreamHandler()
-console_hdlr.setLevel(numeric_level)
 console_hdlr.setFormatter(log_formatter)
 
 # Setup logs in the log file.
 file_hdlr = logging.FileHandler('data_generation.log')
-file_hdlr.setLevel(numeric_level)
 file_hdlr.setFormatter(log_formatter)
 
 # Setup the logger.
 logger = logging.getLogger(__name__)
 logger.addHandler(console_hdlr)
 logger.addHandler(file_hdlr)
+logger.setLevel(numeric_level)
 
 
 def process(dataset, index_start_from=0):
@@ -87,10 +86,10 @@ def process(dataset, index_start_from=0):
     except:
         logger.error(
             "Unexpected error. sample index: {}".format(current_sample_index))
-
-    # Summary
-    logger.info("Dataset done. Processed samples: {}, invalid samples: {}".format(
-        current_sample_index, num_invalid_samples))
+    finally:
+        # Summary
+        logger.info("Dataset done. Processed samples: {}, invalid samples: {}".format(
+            current_sample_index, num_invalid_samples))
 
 
 if __name__ == "__main__":
