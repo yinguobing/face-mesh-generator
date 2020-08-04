@@ -1,3 +1,4 @@
+import argparse
 import logging
 
 from tqdm import tqdm
@@ -5,18 +6,27 @@ from tqdm import tqdm
 import fmd
 from mark_guardians import check_mark_location
 
+# Get the command line argument.
+parser = argparse.ArgumentParser()
+parser.add_argument("--loglevel", type=str, default="info",
+                    help="The logging level.")
+args = parser.parse_args()
+
 # Data processing is a long time job, which makes logging a essential part.
 log_formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+numeric_level = getattr(logging, args.loglevel.upper(), None)
+if not isinstance(numeric_level, int):
+    raise ValueError('Invalid log level: {}'.format(args.loglevel))
 
 # Setup logs in the console.
 console_hdlr = logging.StreamHandler()
-console_hdlr.setLevel(logging.INFO)
+console_hdlr.setLevel(numeric_level)
 console_hdlr.setFormatter(log_formatter)
 
 # Setup logs in the log file.
 file_hdlr = logging.FileHandler('data_generation.log')
-file_hdlr.setLevel(logging.INFO)
+file_hdlr.setLevel(numeric_level)
 file_hdlr.setFormatter(log_formatter)
 
 # Setup the logger.
@@ -26,8 +36,8 @@ logger.addHandler(file_hdlr)
 
 
 def process(dataset, index_start_from=0):
-    """Process the dataset as required, including rotating the face, crop the 
-    face area. 
+    """Process the dataset as required, including rotating the face, crop the
+    face area.
 
     Args:
         dataset: a MarkDataset object.
@@ -75,7 +85,7 @@ def process(dataset, index_start_from=0):
                     sample.image_file, current_sample_index))
                 continue
     except:
-        logger.critical(
+        logger.error(
             "Unexpected error. sample index: {}".format(current_sample_index))
 
     # Summary
