@@ -45,6 +45,12 @@ class MarkOperator(object):
 
         return radian if in_radian is True else np.rad2deg(radian)
 
+    def get_center(self, marks):
+        """Return the center point of the mark group."""
+        x, y, z = (np.amax(marks, 0) + np.amin(marks, 0)) / 2
+
+        return np.array([x, y, z])
+
     def rotate(self, marks, radian, center=(0, 0)):
         """Rotate the marks around center by angle"""
         _points = marks - np.array(center, np.float)
