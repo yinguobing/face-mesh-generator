@@ -31,7 +31,7 @@ class MarkDataset(ABC):
         return self
 
     def __next__(self):
-        if self.index == len(self.image_files) - 1:
+        if self.index == len(self.image_files):
             raise StopIteration
         dp = self._make_datapair(self.index)
         self.index += 1

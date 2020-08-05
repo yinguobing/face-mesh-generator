@@ -154,7 +154,7 @@ def process(dataset, index_start_from=0):
     finally:
         # Summary
         logger.info("Dataset done. Processed samples: {}, invalid samples: {}".format(
-            current_sample_index, num_invalid_samples))
+            current_sample_index+1, num_invalid_samples))
 
 
 if __name__ == "__main__":
