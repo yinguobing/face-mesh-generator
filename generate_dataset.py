@@ -16,26 +16,35 @@ parser.add_argument("--loglevel", type=str, default="info",
                     help="The logging level.")
 args = parser.parse_args()
 
+
+def setup_logger():
+    # Data processing is a long time job, which makes logging a essential part.
+    numeric_level = getattr(logging, args.loglevel.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError('Invalid log level: {}'.format(args.loglevel))
+
+    # Format setup.
+    log_formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # Setup logs in the console.
+    console_hdlr = logging.StreamHandler()
+    console_hdlr.setFormatter(log_formatter)
+
+    # Setup logs in the log file.
+    file_hdlr = logging.FileHandler('data_generation.log')
+    file_hdlr.setFormatter(log_formatter)
+
+    # Setup the logger.
+    logger = logging.getLogger(__name__)
+    logger.addHandler(console_hdlr)
+    logger.addHandler(file_hdlr)
+    logger.setLevel(numeric_level)
+    return logger
+
+
 # Data processing is a long time job, which makes logging a essential part.
-log_formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-numeric_level = getattr(logging, args.loglevel.upper(), None)
-if not isinstance(numeric_level, int):
-    raise ValueError('Invalid log level: {}'.format(args.loglevel))
-
-# Setup logs in the console.
-console_hdlr = logging.StreamHandler()
-console_hdlr.setFormatter(log_formatter)
-
-# Setup logs in the log file.
-file_hdlr = logging.FileHandler('data_generation.log')
-file_hdlr.setFormatter(log_formatter)
-
-# Setup the logger.
-logger = logging.getLogger(__name__)
-logger.addHandler(console_hdlr)
-logger.addHandler(file_hdlr)
-logger.setLevel(numeric_level)
+logger = setup_logger()
 
 
 def process(dataset, index_start_from=0):
@@ -79,7 +88,6 @@ def process(dataset, index_start_from=0):
 
             # Security check passed, the image is ready for transformation. Here
             # the face area is our region of interest, and will be cropped.
-            fmd.mark_dataset.util.draw_marks(image, marks)
 
             # First, move the face to the center.
             face_center = mo.get_center(marks)[:2]
