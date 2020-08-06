@@ -145,7 +145,7 @@ def process(dataset, index_start_from=0):
             # Last, resize the face area. I noticed Google is using 192px.
             image_resized = cv2.resize(image_cropped, (192, 192))
 
-            cv2.imshow("Rotated", image_resized)
+            cv2.imshow("Preview", image_resized)
             if cv2.waitKey(30) == 27:
                 break
     except Exception:
