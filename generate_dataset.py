@@ -74,15 +74,8 @@ def process(dataset, index_start_from=0):
 
             # Safety check, invalid samples will be discarded.
             image = sample.read_image()
-            marks = sample.marks
-
-            # Check mark locations. Make sure they are all in image.
             img_height, img_width, _ = image.shape
-            if not check_mark_location(img_height, img_width, marks):
-                num_invalid_samples += 1
-                logger.warning("Mark outside of image: {}, index: {}".format(
-                    sample.image_file, current_sample_index))
-                continue
+            marks = sample.marks
 
             # Security check passed, the image is ready for transformation. Here
             # the face area is our region of interest, and will be cropped.
