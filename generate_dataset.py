@@ -76,13 +76,6 @@ def process(dataset, index_start_from=0):
             image = sample.read_image()
             marks = sample.marks
 
-            # Only color images are valid.
-            if len(image.shape) != 3:
-                num_invalid_samples += 1
-                logger.warning("Not a color image: {}, index: {}".format(
-                    sample.image_file, current_sample_index))
-                continue
-
             # Check mark locations. Make sure they are all in image.
             img_height, img_width, _ = image.shape
             if not check_mark_location(img_height, img_width, marks):
