@@ -28,14 +28,14 @@ Model link: https://github.com/google/mediapipe/blob/master/mediapipe/models/fac
 Take WFLW as an example. Download the dataset files from the official website. Extract all files to one directory.
 
 First, Construct the dataset.
-```bash
+```python
 ds_wflw = fmd.wflw.WFLW("wflw")
 ds_wflw.populate_dataset(wflw_dir)
 ```
 `wflw_dir` is the directory for the extracted files.
 
 Then, process the dataset.
-```bash
+```python
 process(ds_wflw)
 ```
 
