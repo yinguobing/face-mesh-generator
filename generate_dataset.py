@@ -104,7 +104,8 @@ def process(dataset, index_start_from=0):
                 marks_translated, degrees/180*np.pi, (img_width/2, img_height/2))
 
             # Third, try to crop the face area out. Pad the image if necessary.
-            image_cropped, padding, bbox = crop_face(image_rotated, marks, scale=1.7)
+            image_cropped, padding, bbox = crop_face(
+                image_rotated, marks, scale=1.7)
             mark_cropped = marks_rotated + \
                 padding - np.array([bbox[0], bbox[1]])
 
@@ -126,7 +127,7 @@ def process(dataset, index_start_from=0):
             # Generate face mesh.
             face_mesh, score = md.get_mesh(image_resized)
             md.draw_mesh(image_resized, face_mesh, mark_size=1)
-            logger.info("Mesh score: {}".format(score))
+            logger.debug("Mesh score: {}".format(score))
             cv2.imshow("Mesh", cv2.resize(image_resized, (512, 512)))
             if cv2.waitKey() == 27:
                 break
@@ -253,46 +254,44 @@ if __name__ == "__main__":
     # Construct the datasets.
 
     # 300W
-    # ds_300w = fmd.ds300w.DS300W("300w")
-    # ds_300w.populate_dataset(ds300w_dir)
+    ds_300w = fmd.ds300w.DS300W("300w")
+    ds_300w.populate_dataset(ds300w_dir)
 
-    # # 300VW
-    # ds_300vw = fmd.ds300vw.DS300VW("300vw")
-    # ds_300vw.populate_dataset(ds300vw_dir)
+    # 300VW
+    ds_300vw = fmd.ds300vw.DS300VW("300vw")
+    ds_300vw.populate_dataset(ds300vw_dir)
 
-    # # AFW
-    # ds_afw = fmd.afw.AFW("afw")
-    # ds_afw.populate_dataset(afw_dir)
+    # AFW
+    ds_afw = fmd.afw.AFW("afw")
+    ds_afw.populate_dataset(afw_dir)
 
-    # # HELEN
-    # ds_helen = fmd.helen.HELEN("helen")
-    # ds_helen.populate_dataset(helen_dir)
+    # HELEN
+    ds_helen = fmd.helen.HELEN("helen")
+    ds_helen.populate_dataset(helen_dir)
 
-    # # IBUG
-    # ds_ibug = fmd.ibug.IBUG("ibug")
-    # ds_ibug.populate_dataset(ibug_dir)
+    # IBUG
+    ds_ibug = fmd.ibug.IBUG("ibug")
+    ds_ibug.populate_dataset(ibug_dir)
 
-    # # LFPW
-    # ds_lfpw = fmd.lfpw.LFPW("lfpw")
-    # ds_lfpw.populate_dataset(lfpw_dir)
+    # LFPW
+    ds_lfpw = fmd.lfpw.LFPW("lfpw")
+    ds_lfpw.populate_dataset(lfpw_dir)
 
     # WFLW
     ds_wflw = fmd.wflw.WFLW("wflw")
     ds_wflw.populate_dataset(wflw_dir)
 
-    process(ds_wflw)
+    # AFLW2000-3D
+    ds_aflw2k3d = fmd.AFLW2000_3D("AFLW2000_3D")
+    ds_aflw2k3d.populate_dataset(aflw2000_3d_dir)
 
-    # # AFLW2000-3D
-    # ds_aflw2k3d = fmd.AFLW2000_3D("AFLW2000_3D")
-    # ds_aflw2k3d.populate_dataset(aflw2000_3d_dir)
+    datasets = [ds_300vw, ds_300w, ds_aflw2k3d,
+                ds_afw, ds_helen, ds_ibug, ds_lfpw, ds_wflw]
 
-    # datasets = [ds_300vw, ds_300w, ds_aflw2k3d,
-    #             ds_afw, ds_helen, ds_ibug, ds_lfpw, ds_wflw]
+    # How many samples do we have?
+    print("Total samples: {}".format(
+        sum(ds.meta["num_samples"] for ds in datasets)))
 
-    # # How many samples do we have?
-    # print("Total samples: {}".format(
-    #     sum(ds.meta["num_samples"] for ds in datasets)))
-
-    # # Process all the data.
-    # for ds in datasets:
-    #     process(ds)
+    # Process all the data.
+    for ds in datasets:
+        process(ds)
