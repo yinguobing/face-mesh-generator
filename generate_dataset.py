@@ -104,7 +104,7 @@ def process(dataset, index_start_from=0):
                 marks_translated, degrees/180*np.pi, (img_width/2, img_height/2))
 
             # Third, try to crop the face area out. Pad the image if necessary.
-            image_cropped, padding, bbox = crop_face(image_rotated, marks)
+            image_cropped, padding, bbox = crop_face(image_rotated, marks, scale=1.7)
             mark_cropped = marks_rotated + \
                 padding - np.array([bbox[0], bbox[1]])
 
@@ -167,16 +167,20 @@ def rotate_to_vertical(image, sample, mo):
     return image_rotated, degrees
 
 
-def crop_face(image, marks):
-    img_height, img_width, _ = image.shape
+def crop_face(image, marks, scale=1.8, shift_ratios=(0, 0)):
+    # How large the bounding box is?
     x_min, y_min, _ = np.amin(marks, 0)
     x_max, y_max, _ = np.amax(marks, 0)
-    scale = 1.8
     side_length = max((x_max - x_min, y_max - y_min)) * scale
-    x_start = int(img_width / 2 - side_length / 2)
-    y_start = int(img_height / 2 - side_length / 2)
-    x_end = int(img_width / 2 + side_length / 2)
-    y_end = int(img_height / 2 + side_length / 2)
+
+    # Face box is scaled, get the new corners, shifted.
+    img_height, img_width, _ = image.shape
+    x_shift, y_shift = np.array(shift_ratios) * side_length
+
+    x_start = int(img_width / 2 - side_length / 2 + x_shift)
+    y_start = int(img_height / 2 - side_length / 2 + y_shift)
+    x_end = int(img_width / 2 + side_length / 2 + x_shift)
+    y_end = int(img_height / 2 + side_length / 2 + y_shift)
 
     # In case the new bbox is out of image bounding.
     border_width = 0
