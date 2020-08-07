@@ -9,6 +9,7 @@ from tqdm import tqdm
 import fmd
 from mark_guardians import check_mark_location
 from mark_operator import MarkOperator
+from mesh_detector import MeshDetector
 
 # Get the command line argument.
 parser = argparse.ArgumentParser()
@@ -69,6 +70,9 @@ def process(dataset, index_start_from=0):
     # Construct a mark operator to transform the marks.
     mo = MarkOperator()
 
+    # Construct a face mesh detector to generate face mesh from image.
+    md = MeshDetector("assets/face_landmark.tflite")
+
     # Some dataset contains enormous samples, in which some may be corrupted
     # and cause processing error. Catch these errors to avoid restarting over
     # from the start.
@@ -118,7 +122,14 @@ def process(dataset, index_start_from=0):
                     break
 
             # Now the cropped face and marks are available, do whatever you want.
-            # TODO: Generate face mesh.
+
+            # Generate face mesh.
+            face_mesh, score = md.get_mesh(image_resized)
+            md.draw_mesh(image_resized, face_mesh, mark_size=1)
+            logger.info("Mesh score: {}".format(score))
+            cv2.imshow("Mesh", cv2.resize(image_resized, (512, 512)))
+            if cv2.waitKey() == 27:
+                break
 
     except Exception:
         logger.error(
@@ -160,7 +171,7 @@ def crop_face(image, marks):
     img_height, img_width, _ = image.shape
     x_min, y_min, _ = np.amin(marks, 0)
     x_max, y_max, _ = np.amax(marks, 0)
-    scale = 1.5
+    scale = 1.8
     side_length = max((x_max - x_min, y_max - y_min)) * scale
     x_start = int(img_width / 2 - side_length / 2)
     y_start = int(img_height / 2 - side_length / 2)
@@ -265,7 +276,7 @@ if __name__ == "__main__":
     ds_wflw = fmd.wflw.WFLW("wflw")
     ds_wflw.populate_dataset(wflw_dir)
 
-    process(ds_wflw, 132)
+    process(ds_wflw)
 
     # # AFLW2000-3D
     # ds_aflw2k3d = fmd.AFLW2000_3D("AFLW2000_3D")
