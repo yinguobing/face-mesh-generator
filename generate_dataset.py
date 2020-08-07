@@ -10,6 +10,7 @@ import fmd
 from mark_guardians import check_mark_location
 from mark_operator import MarkOperator
 from mesh_detector import MeshDetector
+from tfrecord_operator import RecordWriter
 
 # Get the command line argument.
 parser = argparse.ArgumentParser()
@@ -73,6 +74,9 @@ def process(dataset, index_start_from=0):
     # Construct a face mesh detector to generate face mesh from image.
     md = MeshDetector("assets/face_landmark.tflite")
 
+    # Construct a writer for TFRecord files.
+    tf_writer = RecordWriter("tfrecord/{}.record".format(dataset.meta["name"]))
+
     # Some dataset contains enormous samples, in which some may be corrupted
     # and cause processing error. Catch these errors to avoid restarting over
     # from the start.
@@ -126,8 +130,15 @@ def process(dataset, index_start_from=0):
 
             # Generate face mesh.
             face_mesh, score = md.get_mesh(image_resized)
-            md.draw_mesh(image_resized, face_mesh, mark_size=1)
             logger.debug("Mesh score: {}".format(score))
+
+            # Save the current sample to a TFRecord file.
+            image_to_save = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
+            tf_writer.write_example(
+                image_to_save, face_mesh, score, sample.image_file)
+
+            # Preview the image?
+            md.draw_mesh(image_resized, face_mesh, mark_size=1)
             cv2.imshow("Mesh", cv2.resize(image_resized, (512, 512)))
             if cv2.waitKey() == 27:
                 break
