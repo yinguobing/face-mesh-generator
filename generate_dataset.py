@@ -20,7 +20,9 @@ args = parser.parse_args()
 
 
 def setup_logger():
-    # Data processing is a long time job, which makes logging a essential part.
+    """Setup a logger. Data processing is a long time job, which makes logging a
+    essential part. No need to read this function if the dataset is your only 
+    concern."""
     numeric_level = getattr(logging, args.loglevel.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError('Invalid log level: {}'.format(args.loglevel))
@@ -55,7 +57,8 @@ def process(dataset, index_start_from=0):
 
     Args:
         dataset: a MarkDataset object.
-        start_from: the sample index to start from.
+        start_from: the sample index to start from. Samples before this will be
+        skipped.
 
     Returns:
         None
@@ -132,10 +135,10 @@ def process(dataset, index_start_from=0):
             face_mesh, score = md.get_mesh(image_resized)
             logger.debug("Mesh score: {}".format(score))
 
-            # Save the current sample to a TFRecord file.
-            image_to_save = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
-            tf_writer.write_example(
-                image_to_save, face_mesh, score, sample.image_file)
+            # # Save the current sample to a TFRecord file.
+            # image_to_save = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
+            # tf_writer.write_example(
+            #     image_to_save, face_mesh, score, sample.image_file)
 
             # Preview the image?
             md.draw_mesh(image_resized, face_mesh, mark_size=1)
@@ -153,6 +156,16 @@ def process(dataset, index_start_from=0):
 
 
 def move_face_to_center(image, marks, mo):
+    """This function will move the marked face to the image center.
+
+    Args:
+        image: image containing a marked face.
+        marks: the face marks.
+        mo: the mark operater.
+
+    Returns:
+        a same size image with marked face at center.
+    """
     img_height, img_width, _ = image.shape
     face_center = mo.get_center(marks)[:2]
     translation_mat = np.array([[1, 0, img_width / 2 - face_center[0]],
@@ -167,6 +180,16 @@ def move_face_to_center(image, marks, mo):
 
 
 def rotate_to_vertical(image, sample, mo):
+    """Rotate the image to make the face vertically aligned.
+
+    Args:
+        image: an image with face to be processed.
+        sample: the dataset sample of the input image.
+        mo: the mark operator.
+
+    Returns:
+        a same size image with aligned face.
+    """
     img_height, img_width, _ = image.shape
     key_marks = sample.get_key_marks()[:, :2]
     vector_eye = (key_marks[3] - key_marks[0])
@@ -180,6 +203,17 @@ def rotate_to_vertical(image, sample, mo):
 
 
 def crop_face(image, marks, scale=1.8, shift_ratios=(0, 0)):
+    """Crop the face area from the input image.
+
+    Args:
+        image: input image.
+        marks: the facial marks of the face to be cropped.
+        scale: how much to scale the face box.
+        shift_ratios: shift the face box to (right, down) by facebox size * ratios
+
+    Returns:
+        cropped face image.
+    """
     # How large the bounding box is?
     x_min, y_min, _ = np.amin(marks, 0)
     x_max, y_max, _ = np.amax(marks, 0)
@@ -264,45 +298,46 @@ if __name__ == "__main__":
 
     # Construct the datasets.
 
-    # 300W
+    # # 300W
     ds_300w = fmd.ds300w.DS300W("300w")
     ds_300w.populate_dataset(ds300w_dir)
 
-    # 300VW
-    ds_300vw = fmd.ds300vw.DS300VW("300vw")
-    ds_300vw.populate_dataset(ds300vw_dir)
+    process(ds_300w)
+    # # 300VW
+    # ds_300vw = fmd.ds300vw.DS300VW("300vw")
+    # ds_300vw.populate_dataset(ds300vw_dir)
 
-    # AFW
-    ds_afw = fmd.afw.AFW("afw")
-    ds_afw.populate_dataset(afw_dir)
+    # # AFW
+    # ds_afw = fmd.afw.AFW("afw")
+    # ds_afw.populate_dataset(afw_dir)
 
     # HELEN
-    ds_helen = fmd.helen.HELEN("helen")
-    ds_helen.populate_dataset(helen_dir)
+    # ds_helen = fmd.helen.HELEN("helen")
+    # ds_helen.populate_dataset(helen_dir)
 
-    # IBUG
-    ds_ibug = fmd.ibug.IBUG("ibug")
-    ds_ibug.populate_dataset(ibug_dir)
+    # # IBUG
+    # ds_ibug = fmd.ibug.IBUG("ibug")
+    # ds_ibug.populate_dataset(ibug_dir)
 
-    # LFPW
-    ds_lfpw = fmd.lfpw.LFPW("lfpw")
-    ds_lfpw.populate_dataset(lfpw_dir)
+    # # LFPW
+    # ds_lfpw = fmd.lfpw.LFPW("lfpw")
+    # ds_lfpw.populate_dataset(lfpw_dir)
 
-    # WFLW
-    ds_wflw = fmd.wflw.WFLW("wflw")
-    ds_wflw.populate_dataset(wflw_dir)
+    # # WFLW
+    # ds_wflw = fmd.wflw.WFLW("wflw")
+    # ds_wflw.populate_dataset(wflw_dir)
 
-    # AFLW2000-3D
-    ds_aflw2k3d = fmd.AFLW2000_3D("AFLW2000_3D")
-    ds_aflw2k3d.populate_dataset(aflw2000_3d_dir)
+    # # AFLW2000-3D
+    # ds_aflw2k3d = fmd.AFLW2000_3D("AFLW2000_3D")
+    # ds_aflw2k3d.populate_dataset(aflw2000_3d_dir)
 
-    datasets = [ds_300vw, ds_300w, ds_aflw2k3d,
-                ds_afw, ds_helen, ds_ibug, ds_lfpw, ds_wflw]
+    # datasets = [ds_300vw, ds_300w, ds_aflw2k3d,
+    #             ds_afw, ds_helen, ds_ibug, ds_lfpw, ds_wflw]
 
-    # How many samples do we have?
-    print("Total samples: {}".format(
-        sum(ds.meta["num_samples"] for ds in datasets)))
+    # # How many samples do we have?
+    # print("Total samples: {}".format(
+    #     sum(ds.meta["num_samples"] for ds in datasets)))
 
-    # Process all the data.
-    for ds in datasets:
-        process(ds)
+    # # Process all the data.
+    # for ds in datasets:
+    #     process(ds)
