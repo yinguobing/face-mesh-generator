@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 import tensorflow as tf
 
-from tfrecord_operator import RecordReader
+from mesh_record_operator import MeshRecordOperator
 from fmd.mark_dataset.util import draw_marks
 
 if __name__ == "__main__":
-    dataset = RecordReader(
-        "/home/robin/Desktop/face-mesh-generator/tfrecord/300w.record")
+    dataset = MeshRecordOperator(
+        "/home/robin/Developer/face-mesh-generator/tfrecord/300w.record")
 
     for sample in dataset.parse_dataset():
 
@@ -16,7 +16,7 @@ if __name__ == "__main__":
         width = sample['image/width'].numpy()
         depth = sample['image/depth'].numpy()
         filename = sample['image/filename'].numpy()
-        marks = sample['label/mesh'].numpy()
+        marks = tf.io.parse_tensor(sample['label/mesh'], tf.float32).numpy()
 
         print(filename, width, height, depth)
 
