@@ -1,6 +1,8 @@
 # face-mesh-generator
 Generate face mesh dataset using Google's FaceMesh model from annotated face datasets.
 
+Watch this [30s demo](https://www.bilibili.com/video/BV1Jp4y1v7MY/).
+
 You can find the supported datasets list here:
 https://github.com/yinguobing/facial-landmark-dataset
 
