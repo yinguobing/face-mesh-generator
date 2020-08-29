@@ -39,7 +39,7 @@ Then, process the dataset.
 process(ds_wflw)
 ```
 
-There is a demo file `generate_dataset.py`. Please refer to it for more details.
+There is a demo file `generate_mesh_dataset.py` demonstrating how to generate face mesh data and save them in a TFRecord file. Please refer to it for more details.
 
 ## Authors
 Yin Guobing (尹国冰) - yinguobing
