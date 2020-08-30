@@ -136,7 +136,7 @@ def process(dataset, index_start_from=0):
 
             # Save the current sample to a TFRecord file.
             image_to_save = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
-            example = tf_writer.make_example(image_to_save, mark_resized,
+            example = tf_writer.make_example(image_to_save, mark_normalized,
                                              heatmaps, sample.image_file)
             tf_writer.write_example(example)
 
