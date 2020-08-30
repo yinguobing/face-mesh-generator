@@ -28,8 +28,8 @@ class HeatmapRecordOperator(RecordOperator):
             "label/n_marks": int64_feature(n_marks),
             'heatmap/map': bytes_feature(heatmaps),
             'heatmap/height': int64_feature(heatmap_size[0]),
-            'heatmap/width': int64_feature(heatmap_size[1],
-            'heatmap/depth': int64_feature(heatmap_size[2]
+            'heatmap/width': int64_feature(heatmap_size[1]),
+            'heatmap/depth': int64_feature(heatmap_size[2])
         }
 
         tf_example=tf.train.Example(
@@ -48,6 +48,6 @@ class HeatmapRecordOperator(RecordOperator):
             'label/n_marks': tf.io.FixedLenFeature([], tf.int64),
             'heatmap/map': tf.io.FixedLenFeature([], tf.string),
             'heatmap/height': tf.io.FixedLenFeature([], tf.int64),
-            'heatmap/width': tf.io.FixedLenFeature([], tf.int64,
+            'heatmap/width': tf.io.FixedLenFeature([], tf.int64),
             'heatmap/depth': tf.io.FixedLenFeature([], tf.int64)
         }
