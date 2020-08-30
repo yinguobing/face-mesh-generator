@@ -29,10 +29,20 @@ if __name__ == "__main__":
 
         # Draw the landmark on image
         draw_marks(image, marks*width, 1)
-        heatmaps = np.sum(heatmaps, axis=0) * 0.1
+
+        # View the heatmaps as a whole..
+        heatmaps_merged = np.sum(heatmaps, axis=0) * 0.1
+
+        # ..or individually.
+        heatmap_idvs = np.hstack(heatmaps[:8])
+        for row in range(1, 12, 1):
+            heatmap_idvs = np.vstack(
+                [heatmap_idvs, np.hstack(heatmaps[row:row+8])])
 
         # Show the result
         cv2.imshow("image", cv2.resize(image, (512, 512)))
-        cv2.imshow("Heatmap", cv2.resize(heatmaps, (512, 512), interpolation=cv2.INTER_AREA))
+        cv2.imshow("Heatmap", cv2.resize(
+            heatmaps_merged, (512, 512), interpolation=cv2.INTER_AREA))
+        cv2.imshow("Heatmap_idvs", heatmap_idvs)
         if cv2.waitKey() == 27:
             break
