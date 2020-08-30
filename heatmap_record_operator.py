@@ -32,13 +32,13 @@ class HeatmapRecordOperator(RecordOperator):
             'heatmap/depth': int64_feature(heatmap_size[2])
         }
 
-        tf_example=tf.train.Example(
+        tf_example = tf.train.Example(
             features=tf.train.Features(feature=feature))
 
         return tf_example
 
     def set_feature_description(self):
-        self.feature_description={
+        self.feature_description = {
             'image/height': tf.io.FixedLenFeature([], tf.int64),
             'image/width': tf.io.FixedLenFeature([], tf.int64),
             'image/depth': tf.io.FixedLenFeature([], tf.int64),
