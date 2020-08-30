@@ -115,4 +115,4 @@ class MarkOperator(object):
             heatmap = _generate_heatmap(heatmap, (x, y), sigma)
             maps.append(heatmap)
 
-        return maps
+        return np.array(maps, dtype=np.float)
