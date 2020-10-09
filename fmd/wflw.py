@@ -14,10 +14,21 @@ from fmd.mark_dataset.util import FileListGenerator
 
 class WFLW(MarkDataset):
     """Please make sure the uncompressed files are in the same folder:
+
     .
     ├── WFLW_annotations
     └── WFLW_images
     """
+
+    def __init__(self, is_train, name):
+        """Initialize a WFLW dataset.
+
+        Args:
+            is_train: construct the training set if set to True, else test set.
+
+        """
+        super(WFLW, self).__init__(dataset_name=name)
+        self.is_train = is_train
 
     def populate_dataset(self, image_dir):
         """Populate the WFLW dataset with essential data.
@@ -56,8 +67,10 @@ class WFLW(MarkDataset):
                     self.image_files.append(image_path)
                     self.mark_group.append(marks)
 
-        _read_mark_file(mark_file_test)
-        _read_mark_file(mark_file_train)
+        if self.is_train:
+            _read_mark_file(mark_file_train)
+        else:
+            _read_mark_file(mark_file_test)
 
         # This is the virtual mark files. It is actually a int number.
         self.mark_files = range(len(self.image_files))
