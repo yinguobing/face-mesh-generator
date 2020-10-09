@@ -137,7 +137,7 @@ def process(dataset, index_start_from=0):
             export_dir = "/home/robin/data/facial-marks/wflw_cropped"
 
             img_file = os.path.join(
-                export_dir, os.path.basename(sample.image_file))
+                export_dir, "{}_{}".format(current_sample_index, os.path.basename(sample.image_file)))
             mark_file = img_file.split(".")[-2] + ".json"
 
             cv2.imwrite(img_file, image_resized)
