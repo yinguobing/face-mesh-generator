@@ -1,6 +1,7 @@
 import argparse
 import logging
 import traceback
+import os
 
 import cv2
 import numpy as np
@@ -117,9 +118,9 @@ def process(dataset, index_start_from=0):
             mark_cropped = marks_rotated + \
                 padding - np.array([bbox[0], bbox[1]])
 
-            # Last, resize the face area. I noticed Google is using 192px.
-            image_resized = cv2.resize(image_cropped, (192, 192))
-            mark_resized = mark_cropped * (192 / image_cropped.shape[0])
+            # Last, resize the face area.
+            image_resized = cv2.resize(image_cropped, (384, 384))
+            mark_resized = mark_cropped * (384 / image_cropped.shape[0])
 
             # Show all the image processed in debug mode.
             if args.loglevel.upper() == "DEBUG":
@@ -132,21 +133,16 @@ def process(dataset, index_start_from=0):
 
             # Now the cropped face and marks are available, do whatever you want.
 
-            # Generate face mesh.
-            face_mesh, score = md.get_mesh(image_resized)
-            logger.debug("Mesh score: {}".format(score))
+            # Save the processed image and new marks to files.
+            export_dir = "/home/robin/data/facial-marks/wflw_cropped"
 
-            # Save the current sample to a TFRecord file.
-            image_to_save = cv2.cvtColor(image_resized, cv2.COLOR_BGR2RGB)
-            example = tf_writer.make_example(
-                image_to_save, face_mesh, score, sample.image_file)
-            tf_writer.write_example(example)
+            img_file = os.path.join(
+                export_dir, os.path.basename(sample.image_file))
+            mark_file = img_file.split(".")[-2] + ".json"
 
-            # Preview the image?
-            md.draw_mesh(image_resized, face_mesh, mark_size=1)
-            cv2.imshow("Mesh", cv2.resize(image_resized, (512, 512)))
-            if cv2.waitKey() == 27:
-                break
+            cv2.imwrite(img_file, image_resized)
+            sample.marks = mark_resized
+            sample.save_mark_to_json(mark_file)
 
     except Exception:
         logger.error(
@@ -301,10 +297,9 @@ if __name__ == "__main__":
     # Construct the datasets.
 
     # # 300W
-    ds_300w = fmd.ds300w.DS300W("300w")
-    ds_300w.populate_dataset(ds300w_dir)
+    # ds_300w = fmd.ds300w.DS300W("300w")
+    # ds_300w.populate_dataset(ds300w_dir)
 
-    process(ds_300w)
     # # 300VW
     # ds_300vw = fmd.ds300vw.DS300VW("300vw")
     # ds_300vw.populate_dataset(ds300vw_dir)
@@ -325,9 +320,10 @@ if __name__ == "__main__":
     # ds_lfpw = fmd.lfpw.LFPW("lfpw")
     # ds_lfpw.populate_dataset(lfpw_dir)
 
-    # # WFLW
-    # ds_wflw = fmd.wflw.WFLW("wflw")
-    # ds_wflw.populate_dataset(wflw_dir)
+    # WFLW
+    ds_wflw = fmd.wflw.WFLW(True, "wflw_train")
+    ds_wflw.populate_dataset(wflw_dir)
+    process(ds_wflw)
 
     # # AFLW2000-3D
     # ds_aflw2k3d = fmd.AFLW2000_3D("AFLW2000_3D")
