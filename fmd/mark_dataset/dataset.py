@@ -39,7 +39,8 @@ class MarkDataset(ABC):
 
     def _make_datapair(self, data_index):
         # Get the coresponding marks.
-        marks = self.get_marks_from_file(self.mark_files[data_index])
+        marks = self.get_marks_from_file(
+            self.mark_files[data_index]).astype(float)
 
         # Construct a datapair.
         return DataPair(self.image_files[data_index], marks, self.key_marks_indices)
@@ -79,3 +80,11 @@ class MarkDataset(ABC):
         straw = np.random.randint(0, len(self.image_files))
 
         return self._make_datapair(straw)
+
+    def export(self, export_dir):
+        """Export the dataset in the FMD format.
+
+        Args:
+            export_dir: the directory to save the dataset.
+        """
+        pass
