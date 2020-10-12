@@ -13,8 +13,9 @@ https://github.com/yinguobing/facial-landmark-dataset
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
-* OpenCV 4.3
-* TensorFlow 2.2
+![TensorFlow](https://img.shields.io/badge/TensorFlow-v2.3-brightgreen)
+![OpenCV](https://img.shields.io/badge/OpenCV-v4.3-brightgreen)
+![Numpy](https://img.shields.io/badge/Numpy-v1.17-brightgreen)
 
 ### Installing
 First clone this repo.
