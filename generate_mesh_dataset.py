@@ -202,6 +202,8 @@ def rotate_to_vertical(image, sample, mo):
 
 def crop_face(image, marks, scale=1.8, shift_ratios=(0, 0)):
     """Crop the face area from the input image.
+     
+    The face MUST be centered.
 
     Args:
         image: input image.
