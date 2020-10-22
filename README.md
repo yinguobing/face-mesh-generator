@@ -8,6 +8,16 @@ https://github.com/yinguobing/facial-landmark-dataset
 
 > Tips: mark heatmaps generation is also supported.
 
+## Features
+There are built in features to help generating the dataset more efficiently.
+
+- Automatically centralize the marked face.
+- Rotate the image to align the face horizontally.
+- Crop the face with custom scale range.
+- Write TensorFlow Record files, or export the processed image and marks.
+
+![pipeline](./docs/processing-pipeline.jpg)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
