@@ -1,12 +1,9 @@
 # face-mesh-generator
 Generate face mesh dataset using Google's FaceMesh model from annotated face datasets.
 
-Watch this [30s demo](https://www.bilibili.com/video/BV1Jp4y1v7MY/).
+Watch this 30s video demo:
 
-Check out the supported datasets list here:
-https://github.com/yinguobing/facial-landmark-dataset
-
-> Tips: mark heatmaps generation is also supported.
+[![video demo](./docs/video-demo.jpg)](https://www.bilibili.com/video/BV1Jp4y1v7MY/).
 
 ## Features
 There are built in features to help generating the dataset more efficiently.
@@ -14,7 +11,10 @@ There are built in features to help generating the dataset more efficiently.
 - Automatically centralize the marked face.
 - Rotate the image to align the face horizontally.
 - Crop the face with custom scale range.
+- Generate mark heatmaps.
 - Write TensorFlow Record files, or export the processed image and marks.
+- Support multiple public datasets. Check the full list [here](https://github.com/yinguobing/facial-landmark-dataset
+)
 
 ![pipeline](./docs/processing-pipeline.jpg)
 
