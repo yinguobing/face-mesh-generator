@@ -123,7 +123,8 @@ def process(dataset, index_start_from=0):
 
             # Show all the image processed in debug mode.
             if args.loglevel.upper() == "DEBUG":
-                esc_key = show_debug_images(image_translated, marks_translated,
+                esc_key = show_debug_images(image, marks,
+                                            image_translated, marks_translated,
                                             image_rotated, marks_rotated,
                                             image_resized, mark_resized,
                                             padding, bbox)
@@ -254,7 +255,11 @@ def crop_face(image, marks, scale=1.8, shift_ratios=(0, 0)):
     return image_cropped, border_width, (x_start, y_start, x_end, y_end)
 
 
-def show_debug_images(image_translated, marks_translated, image_rotated, marks_rotated, image_resized, mark_resized, padding, bbox):
+def show_debug_images(image, marks,
+                      image_translated, marks_translated,
+                      image_rotated, marks_rotated,
+                      image_resized, mark_resized,
+                      padding, bbox):
     # Resconstruct the padded image.
     if padding != 0:
         image_padded = cv2.copyMakeBorder(image_rotated, padding,
@@ -270,6 +275,10 @@ def show_debug_images(image_translated, marks_translated, image_rotated, marks_r
         cv2.rectangle(image_rotated, (bbox[0], bbox[1]),
                       (bbox[2], bbox[3]), (255, 255, 255), 3)
 
+    # Draw original marks.
+    image_original = image.copy()
+    fmd.mark_dataset.util.draw_marks(image_original, marks, 1)
+
     # Draw translated marks.
     fmd.mark_dataset.util.draw_marks(image_translated, marks_translated, 1)
 
@@ -279,9 +288,13 @@ def show_debug_images(image_translated, marks_translated, image_rotated, marks_r
     # Draw resized marks.
     fmd.mark_dataset.util.draw_marks(image_resized, mark_resized, 1)
 
-    # Show them all.
-    cv2.imshow("Translated", image_translated)
-    cv2.imshow("Rotated", image_rotated)
+    # Show them all, in an uniform manner.
+    height = 512
+    width = int(image.shape[1] * height / image.shape[0])
+
+    cv2.imshow("Original", cv2.resize(image_original, (width, height)))
+    cv2.imshow("Translated", cv2.resize(image_translated, (width, height)))
+    cv2.imshow("Rotated", cv2.resize(image_rotated, (width, height)))
     cv2.imshow("Face sample", image_resized)
 
     return cv2.waitKey() == 27
@@ -300,11 +313,10 @@ if __name__ == "__main__":
 
     # Construct the datasets.
 
-    # # 300W
-    ds_300w = fmd.ds300w.DS300W("300w")
-    ds_300w.populate_dataset(ds300w_dir)
+    # # # 300W
+    # ds_300w = fmd.ds300w.DS300W("300w")
+    # ds_300w.populate_dataset(ds300w_dir)
 
-    process(ds_300w)
     # # 300VW
     # ds_300vw = fmd.ds300vw.DS300VW("300vw")
     # ds_300vw.populate_dataset(ds300vw_dir)
@@ -325,9 +337,10 @@ if __name__ == "__main__":
     # ds_lfpw = fmd.lfpw.LFPW("lfpw")
     # ds_lfpw.populate_dataset(lfpw_dir)
 
-    # # WFLW
-    # ds_wflw = fmd.wflw.WFLW("wflw")
-    # ds_wflw.populate_dataset(wflw_dir)
+    # WFLW
+    ds_wflw = fmd.wflw.WFLW(True, "wflw")
+    ds_wflw.populate_dataset(wflw_dir)
+    process(ds_wflw)
 
     # # AFLW2000-3D
     # ds_aflw2k3d = fmd.AFLW2000_3D("AFLW2000_3D")
