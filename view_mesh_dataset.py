@@ -7,7 +7,7 @@ from fmd.mark_dataset.util import draw_marks
 
 if __name__ == "__main__":
     dataset = MeshRecordOperator(
-        "/home/robin/Developer/face-mesh-generator/tfrecord/300w.record")
+        "/home/robin/Developer/face-mesh-generator/tfrecord/lfpw.record")
 
     for sample in dataset.parse_dataset():
 
@@ -16,7 +16,7 @@ if __name__ == "__main__":
         width = sample['image/width'].numpy()
         depth = sample['image/depth'].numpy()
         filename = sample['image/filename'].numpy()
-        marks = tf.io.parse_tensor(sample['label/mesh'], tf.float32).numpy()
+        marks = tf.io.parse_tensor(sample['label/marks'], tf.float64).numpy()
 
         print(filename, width, height, depth)
 
@@ -25,7 +25,7 @@ if __name__ == "__main__":
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         # Draw the landmark on image
-        landmark = np.reshape(marks, (-1, 3)) * width
+        landmark = np.reshape(marks, (-1, 2)) * width
         draw_marks(image, landmark, 1)
 
         # Show the result

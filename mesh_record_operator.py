@@ -23,8 +23,8 @@ class MeshRecordOperator(RecordOperator):
             'image/depth': int64_feature(image_shape[2]),
             'image/filename': bytes_feature(example_name.encode('utf8')),
             'image/encoded': bytes_feature(image_encoded),
-            'label/mesh': bytes_feature(mesh),
-            'label/score': float_feature(score)
+            'label/marks': bytes_feature(mesh),
+            # 'label/score': float_feature(score)
         }
 
         tf_example = tf.train.Example(
@@ -39,6 +39,6 @@ class MeshRecordOperator(RecordOperator):
             'image/depth': tf.io.FixedLenFeature([], tf.int64),
             'image/filename': tf.io.FixedLenFeature([], tf.string),
             'image/encoded': tf.io.FixedLenFeature([], tf.string),
-            'label/mesh': tf.io.FixedLenFeature([], tf.string),
-            'label/score': tf.io.FixedLenFeature([], tf.float32),
+            'label/marks': tf.io.FixedLenFeature([], tf.string),
+            # 'label/score': tf.io.FixedLenFeature([], tf.float32),
         }
