@@ -105,6 +105,8 @@ def process(dataset, index_start_from=0):
             marks_translated = marks[:, :2] + trans_vector
 
             # # Second, align the face. This happens in the 2D space.
+            # This part is commented out as the model will benefits from the
+            # rotated samples. Uncomment this part if you need aligned face.
             # image_rotated, degrees = rotate_to_vertical(
             #     image_translated, sample, mo)
             # img_height, img_width, _ = image.shape
@@ -112,13 +114,14 @@ def process(dataset, index_start_from=0):
             #     marks_translated, degrees/180*np.pi, (img_width/2, img_height/2))
 
             # Third, try to crop the face area out. Pad the image if necessary.
+            scale = np.random.uniform(1.2, 1.3)
             image_cropped, padding, bbox = crop_face(
-                image_translated, marks, scale=1.7)
+                image_translated, marks, scale=scale)
             mark_cropped = marks_translated + \
                 padding - np.array([bbox[0], bbox[1]])
 
-            # Last, resize the face area. I noticed Google is using 192px.
-            image_resized = cv2.resize(image_cropped, (192, 192))
+            # Last, resize the face area.
+            image_resized = cv2.resize(image_cropped, (128, 128))
             mark_resized = mark_cropped / image_cropped.shape[0]
 
             # Show all the image processed in debug mode.

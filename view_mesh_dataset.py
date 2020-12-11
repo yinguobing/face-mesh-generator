@@ -7,7 +7,7 @@ from fmd.mark_dataset.util import draw_marks
 
 if __name__ == "__main__":
     dataset = MeshRecordOperator(
-        "/home/robin/Developer/face-mesh-generator/tfrecord/lfpw.record")
+        "/home/robin/Developer/cnn-facial-landmark/data/300vw.record")
 
     for sample in dataset.parse_dataset():
 
