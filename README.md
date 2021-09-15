@@ -37,7 +37,7 @@ git clone https://github.com/yinguobing/face-mesh-generator.git
 
 Then download Google's FaceMesh tflite model and put it in the `assets` directory.
 
-Model link: https://github.com/google/mediapipe/blob/master/mediapipe/models/face_landmark.tflite
+Model link: https://github.com/google/mediapipe/blob/master/mediapipe/modules/face_landmark/face_landmark.tflite
 
 ## How to run
 Take WFLW as an example. Download the dataset files from the official website. Extract all files to one directory.
